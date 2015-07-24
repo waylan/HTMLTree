@@ -49,12 +49,10 @@ __all__ = [
     'Element',
     'Comment',
     'Text',
-    'AtomicText',
     'RawText',
     'is_node',
     'is_element',
     'is_text',
-    'is_atomic_text',
     'is_raw_text',
     'is_comment',
     'to_string',
@@ -112,13 +110,6 @@ def is_text(node, strict=False):
         return isinstance(node, Text)
 
 
-def is_atomic_text(node):
-    """
-    Returns True if object is an AtomicText node.
-    """
-    return isinstance(node, AtomicText)
-
-
 def is_raw_text(node):
     """
     Returns True if object is a RawText node.
@@ -163,17 +154,6 @@ class Text(Node, text_type):
     Text node.
 
     Contains the text of a text node.
-
-    """
-
-
-class AtomicText(Text):
-    """
-    AtomicText node.
-
-    Contains the text of an atomic text node.
-    Atomic text nodes are treated by the serializer as text nodes.
-    However, they are ignored/skipped by transformers.
 
     """
 

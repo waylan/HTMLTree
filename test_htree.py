@@ -16,7 +16,6 @@ class TestTypes(unittest.TestCase):
         self.assertTrue(htree.is_node(node))
         self.assertTrue(htree.is_text(node))
         self.assertTrue(htree.is_text(node, strict=True))
-        self.assertFalse(htree.is_atomic_text(node))
         self.assertFalse(htree.is_raw_text(node))
         self.assertFalse(htree.is_comment(node))
         self.assertFalse(htree.is_element(node))
@@ -28,23 +27,24 @@ class TestTypes(unittest.TestCase):
         self.assertTrue(htree.is_node(node))
         self.assertTrue(htree.is_text(node))
         self.assertFalse(htree.is_text(node, strict=True))
-        self.assertFalse(htree.is_atomic_text(node))
         self.assertTrue(htree.is_raw_text(node))
         self.assertFalse(htree.is_comment(node))
         self.assertFalse(htree.is_element(node))
         self.assertTrue(repr(node).startswith('<RawText node at '))
         self.assertEqual(node.parent, None)
 
-    def test_AtomicText_type(self):
-        node = htree.AtomicText('some text')
+    def test_Text_subclass_type(self):
+        class TextSubclass(htree.Text):
+            pass
+        node = TextSubclass('some text')
+        self.assertTrue(isinstance(node, TextSubclass))
         self.assertTrue(htree.is_node(node))
         self.assertTrue(htree.is_text(node))
         self.assertFalse(htree.is_text(node, strict=True))
-        self.assertTrue(htree.is_atomic_text(node))
         self.assertFalse(htree.is_raw_text(node))
         self.assertFalse(htree.is_comment(node))
         self.assertFalse(htree.is_element(node))
-        self.assertTrue(repr(node).startswith('<AtomicText node at '))
+        self.assertTrue(repr(node).startswith('<TextSubclass node at '))
         self.assertEqual(node.parent, None)
 
     def test_Comment_type(self):
@@ -52,7 +52,6 @@ class TestTypes(unittest.TestCase):
         self.assertTrue(htree.is_node(node))
         self.assertFalse(htree.is_text(node))
         self.assertFalse(htree.is_text(node, strict=True))
-        self.assertFalse(htree.is_atomic_text(node))
         self.assertFalse(htree.is_raw_text(node))
         self.assertTrue(htree.is_comment(node))
         self.assertFalse(htree.is_element(node))
@@ -64,7 +63,6 @@ class TestTypes(unittest.TestCase):
         self.assertTrue(htree.is_node(node))
         self.assertFalse(htree.is_text(node))
         self.assertFalse(htree.is_text(node, strict=True))
-        self.assertFalse(htree.is_atomic_text(node))
         self.assertFalse(htree.is_raw_text(node))
         self.assertFalse(htree.is_comment(node))
         self.assertTrue(htree.is_element(node))
@@ -77,7 +75,6 @@ class TestTypes(unittest.TestCase):
         self.assertFalse(htree.is_node(obj))
         self.assertFalse(htree.is_text(obj))
         self.assertFalse(htree.is_text(obj, strict=True))
-        self.assertFalse(htree.is_atomic_text(obj))
         self.assertFalse(htree.is_raw_text(obj))
         self.assertFalse(htree.is_comment(obj))
         self.assertFalse(htree.is_element(obj))
@@ -334,8 +331,10 @@ class TestSerializer(unittest.TestCase):
         self.assertEqual(htree.to_string(node), 'some text')
         self.assertEqual(htree.to_string(node, format='xhtml'), 'some text')
 
-    def test_AtomicText_to_string(self):
-        node = htree.AtomicText('some text')
+    def test_Text_subclass_to_string(self):
+        class TextSubclass(htree.Text):
+            pass
+        node = TextSubclass('some text')
         self.assertEqual(htree.to_string(node), 'some text')
         self.assertEqual(htree.to_string(node, format='xhtml'), 'some text')
 
@@ -357,8 +356,10 @@ class TestSerializer(unittest.TestCase):
             'text &amp; &lt;tag&gt;'
         )
 
-    def test_AtomicText_escape_to_string(self):
-        node = htree.AtomicText('"text" & <tag>')
+    def test_Text_subclass_escape_to_string(self):
+        class TextSubclass(htree.Text):
+            pass
+        node = TextSubclass('"text" & <tag>')
         self.assertEqual(htree.to_string(node), '"text" &amp; &lt;tag&gt;')
         self.assertEqual(
             htree.to_string(node, format='xhtml'),
