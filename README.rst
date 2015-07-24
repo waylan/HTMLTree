@@ -14,8 +14,19 @@ This is a much more natural way of working with HTML and text and elements are m
 to be interspered within an element. That said, it is not a Python implementation of
 JavaScript's DOM, nor is it trying to be.
 
-Getting Started
----------------
+Installation
+------------
+
+To install HTMLTree run the following command::
+
+    pip install https://github.com/waylan/HTMLTree/archive/master.zip
+
+Note that this is currently **alpha** software and not yet hosted on PyPI. As such, the
+above command downloads the source code from Github. Upon a stabel release, the package will
+become available from PyPI.
+
+Usage
+-----
 
 To create a node tree, simply start by creating the parent element as an `Element`
 instance::
@@ -28,7 +39,7 @@ Then add some children. First a text node::
     >>> from htree import Text
     >>> ptext = Text('This is ')
     >>> p.append(ptext)
-    
+
 And then some child Elements::
 
     >>> em = Element('em')
@@ -56,7 +67,6 @@ Every Node (including Text nodes) contains a reference to its parent::
     True
     >>> ptext.parent == p
     True
-    
 
 There is no special document object. However, if you would like a container
 which holds multiple children, but do not want the parent to be an Element,
@@ -114,3 +124,29 @@ add and remove HTML classes::
     >>> section1.remove_class('special')
     >>> section1.get('class')
     'foo'
+
+Alternatives
+------------
+
+- `BeautifulSoup`_ (An HTML Parser and document object toolkit)
+- `ElementTree`_ (An XML Parser and Node Tree toolkit)
+- `lxml`_ (XML and HTML toolkit which mostly mirrors ElementTree)
+- `AdvancedHTMLParser`_ (A Python clone of the JavaScript DOM API)
+
+.. _`ElementTree`: http://effbot.org/elementtree/ 
+.. _`BeautifulSoup`: http://www.crummy.com/software/BeautifulSoup/
+.. _`lxml`: http://lxml.de/
+.. _`AdvancedHTMLParser`: https://github.com/kata198/AdvancedHTMLParser
+
+Dependencies
+------------
+
+HTMLTree is a pure Python library with no external dependencies. It should run without issue
+on any Python version greater than or equal to 2.7.
+
+License
+-------
+
+HTMLTree is licenses under the `BSD License`_ as defined in `LICENSE`.
+
+.. _`BSD License`: http://opensource.org/licenses/BSD-2-Clause
