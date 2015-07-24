@@ -45,6 +45,9 @@ from __future__ import unicode_literals
 import sys
 
 
+__version__ = '0.0.1'
+
+
 __all__ = [
     'Element',
     'Comment',

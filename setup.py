@@ -2,13 +2,20 @@
 
 from setuptools import setup
 
+with  open('README.rst', mode='r') as fd:
+    long_description = fd.read()
+
+from htree import __version__
+
 setup(
     name='HTMLTree',
-    version='0.1',
+    version=__version__,
+    url='https://github.com/waylan/HTMLTree',
     description='An HTML Node Tree toolkit.',
+    long_description=long_description,
     author='Waylan Limberg',
     author_email='waylan.limberg@icloud.com',
-    url='https://github.com/waylan/HTMLTree',
+    license='BSD License',
     py_modules=['htree'],
     classifiers=[
         'Development Status :: 3 - Alpha',
