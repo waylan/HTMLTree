@@ -7,11 +7,11 @@ HTMLTree
 An HTML Node Tree toolkit.
 
 A Python 2 and 3 library for creating HTML Node Tree objects. While similar to ElementTree
-in some respects, it is specificly designed from the ground up for HTML and does not
+in some respects, it is specifically designed from the ground up for HTML and does not
 follow many of ElementTree's XML specific patterns. For example, all text is represented
 as child nodes, rather than special `text` and `tail` attributes of Element nodes.
 This is a much more natural way of working with HTML and text and elements are more likely
-to be interspered within an element. That said, it is not a Python implementation of
+to be interspersed within an element. That said, it is not a Python implementation of
 JavaScript's DOM, nor is it trying to be.
 
 Installation
@@ -22,7 +22,7 @@ To install HTMLTree run the following command::
     pip install https://github.com/waylan/HTMLTree/archive/master.zip
 
 Note that this is currently **alpha** software and not yet hosted on PyPI. As such, the
-above command downloads the source code from Github. Upon a stabel release, the package will
+above command downloads the source code from GitHub. Upon a stable release, the package will
 become available from PyPI.
 
 Usage
@@ -129,7 +129,7 @@ Alternatives
 ------------
 
 - `BeautifulSoup`_ (An HTML Parser and document object toolkit)
-- `ElementTree`_ (An XML Parser and Node Tree toolkit)
+- `ElementTree`_ (A XML Parser and Node Tree toolkit)
 - `lxml`_ (XML and HTML toolkit which mostly mirrors ElementTree)
 - `AdvancedHTMLParser`_ (A Python clone of the JavaScript DOM API)
 
@@ -147,6 +147,6 @@ on any Python version greater than or equal to 2.7.
 License
 -------
 
-HTMLTree is licenses under the `BSD License`_ as defined in `LICENSE`.
+HTMLTree is licensed under the `BSD License`_ as defined in `LICENSE`.
 
 .. _`BSD License`: http://opensource.org/licenses/BSD-2-Clause
