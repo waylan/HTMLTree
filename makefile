@@ -26,7 +26,7 @@ build:
 
 .PHONY : test
 test:
-	python run-tests.sh
+	tox
 
 .PHONY : clean
 clean:
