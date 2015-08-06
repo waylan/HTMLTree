@@ -90,15 +90,20 @@ class TestElement(unittest.TestCase):
         self.assertEqual(node[:], [])
 
     def test_Element_copy(self):
+        parent = htree.Element(None)
         node = htree.Element('p', id='foo')
         node.append(htree.Text('some text)'))
+        parent.append(node)
         copy = node.copy()
         self.assertNotEqual(id(node), id(copy))
         self.assertTrue(htree.is_element(node))
         self.assertTrue(htree.is_element(copy))
         self.assertEqual(node.tag, copy.tag)
-        self.assertEqual(node.items(), copy.items())
         self.assertEqual(node[:], copy[:])
+        self.assertNotEqual(node.parent, copy.parent)
+        self.assertEqual(copy.parent, None)
+        self.assertEqual(node.parent, parent)
+        self.assertEqual(node.items(), copy.items())
         copy.set('class', 'bar')
         self.assertNotEqual(node.items(), copy.items())
         # TODO: test changes to children
@@ -242,11 +247,13 @@ class TestElement(unittest.TestCase):
 
     def test_Element_clear(self):
         node = htree.Element('p', id='foo')
-        node.append(htree.Text('some text)'))
+        child = htree.Text('some text)')
+        node.append(child)
         node.clear()
         self.assertEqual(node.tag, 'p')
         self.assertEqual(list(node.items()), [])
         self.assertEqual(node[:], [])
+        self.assertEqual(child.parent, None)
 
     def test_Element_attrib_get(self):
         node = htree.Element('p', id='foo')

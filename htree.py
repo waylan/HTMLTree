@@ -211,10 +211,12 @@ class Element(Node):
         Return a shallow copy of current element.
 
         Subelements will be shared with the original tree.
+        The copied element will be detatched from the tree and have no parent.
 
         """
         node = self.__class__(self.tag, **self.attrib)
         node[:] = self
+        node.parent = None
         return node
 
     def __len__(self):
@@ -297,7 +299,9 @@ class Element(Node):
 
         """
         self.attrib.clear()
-        self._children = []
+        # Detach parent from each child
+        for child in self._children:
+            self.remove(child)
 
     def get(self, key, default=None):
         """
