@@ -142,6 +142,16 @@ class Node(object):
     def __repr__(self):
         return '<{0} node at {1:#x}>'.format(self.__class__.__name__, id(self))
 
+    def iter_ancestors(self):
+        """
+        Return a tree iterator of all ancestors in document order.
+        
+        """
+        if self.parent is not None:
+            yield self.parent
+            for p in self.parent.iter_ancestors():
+                yield p
+
 
 class Comment(Node, text_type):
     """
@@ -351,7 +361,7 @@ class Element(Node):
 
     def iter(self, tags=None):
         """
-        Return a tree iterator of this node and all children in document order.
+        Return a tree iterator of this node and all decedents in document order.
 
         `tags` is a sequence of tag names of nodes which will be returned.
         If `tags` is empty (the default), all nodes will be returned.
@@ -366,7 +376,7 @@ class Element(Node):
 
     def itertext(self, raw=False):
         """
-        Return a tree iterator of all children text nodes in document order.
+        Return a tree iterator of all decedent text nodes in document order.
 
         Set `raw` to `True` to include RawText nodes.
 

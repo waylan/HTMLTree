@@ -329,6 +329,20 @@ class TestElement(unittest.TestCase):
             list(p.itertext(raw=True)),
             [ptext, emtext, strongtext, a1text, a2text]
         )
+        
+    def test_Element_iter_ancestors(self):
+        p = htree.Element('p')
+        em = htree.Element('em')
+        strong = htree.Element('strong')
+        a1 = htree.Element('a')
+        a2 = htree.Element('a')
+        p.append(em)
+        em.append(strong)
+        strong.append(a1)
+        p.append(a2)
+        self.assertEqual(list(a1.iter_ancestors()), [strong, em, p])
+        self.assertEqual(list(a2.iter_ancestors()), [p])
+        self.assertEqual(list(strong.iter_ancestors()), [em, p])
 
 
 class TestSerializer(unittest.TestCase):
