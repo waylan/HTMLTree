@@ -142,7 +142,14 @@ Dependencies
 ------------
 
 HTMLTree is a pure Python library with no external dependencies. It should run without issue
-on any Python version greater than or equal to 2.7.
+on Python versions 2.7, 3.3, 3.4, and 3.5 as well as `PyPy`_.
+
+Running the tests will require `Tox`_, `Coverage.py`_, and `Flake8`_.
+
+.. _`PyPy`: http://pypy.org/
+.. _`Tox`: http://tox.readthedocs.org/en/latest/
+.. _`Coverage.py`: http://nedbatchelder.com/code/coverage/
+.. _`Flake8`: https://flake8.readthedocs.org/
 
 License
 -------
