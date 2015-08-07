@@ -10,7 +10,7 @@ A Python 2 and 3 library for creating HTML Node Tree objects. While similar to E
 in some respects, it is specifically designed from the ground up for HTML and does not
 follow many of ElementTree's XML specific patterns. For example, all text is represented
 as child nodes, rather than special `text` and `tail` attributes of Element nodes.
-This is a much more natural way of working with HTML and text as elements are more likely
+This is a much more natural way of working with HTML as text and elements are more likely
 to be interspersed within an element. That said, it is not a Python implementation of
 JavaScript's DOM, nor is it trying to be.
 
