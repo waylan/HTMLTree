@@ -145,7 +145,7 @@ class Node(object):
     def iter_ancestors(self):
         """
         Return a tree iterator of all ancestors in document order.
-        
+
         """
         if self.parent is not None:
             yield self.parent

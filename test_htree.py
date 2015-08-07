@@ -329,7 +329,7 @@ class TestElement(unittest.TestCase):
             list(p.itertext(raw=True)),
             [ptext, emtext, strongtext, a1text, a2text]
         )
-        
+
     def test_Element_iter_ancestors(self):
         p = htree.Element('p')
         em = htree.Element('em')
