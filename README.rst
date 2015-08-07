@@ -10,7 +10,7 @@ A Python 2 and 3 library for creating HTML Node Tree objects. While similar to E
 in some respects, it is specifically designed from the ground up for HTML and does not
 follow many of ElementTree's XML specific patterns. For example, all text is represented
 as child nodes, rather than special `text` and `tail` attributes of Element nodes.
-This is a much more natural way of working with HTML and text and elements are more likely
+This is a much more natural way of working with HTML and text as elements are more likely
 to be interspersed within an element. That said, it is not a Python implementation of
 JavaScript's DOM, nor is it trying to be.
 
@@ -142,14 +142,9 @@ Dependencies
 ------------
 
 HTMLTree is a pure Python library with no external dependencies. It should run without issue
-on Python versions 2.7, 3.3, 3.4, and 3.5 as well as `PyPy`_.
-
-Running the tests will require `Tox`_, `Coverage.py`_, and `Flake8`_.
+on CPython versions 2.7, 3.3, 3.4, and 3.5 as well as `PyPy`_.
 
 .. _`PyPy`: http://pypy.org/
-.. _`Tox`: http://tox.readthedocs.org/en/latest/
-.. _`Coverage.py`: http://nedbatchelder.com/code/coverage/
-.. _`Flake8`: https://flake8.readthedocs.org/
 
 License
 -------
