@@ -142,6 +142,57 @@ class Node(object):
     def __repr__(self):
         return '<{0} node at {1:#x}>'.format(self.__class__.__name__, id(self))
 
+    def next_sibling(self):
+        """
+        Return the next (one) sibling of this node.
+
+        Returns None if this node has no parent or is the last sibling.
+
+        """
+        if self.parent is None:
+            return None
+        try:
+            i = self.parent.index(self)
+            return self.parent[i+1]
+        except (ValueError, IndexError):
+            return None
+
+    def next_siblings(self):
+        """
+        Return an iterator of all siblings which follow this node.
+        
+        """
+        if self.parent is None:
+            return []
+        i = self.parent.index(self)
+        return self.parent[i+1:]
+
+    def previous_sibling(self):
+        """
+        Return the previous (one) sibling of this node.
+
+        Returns None if this node has no parent or is the first sibling.
+
+        """
+        if self.parent is None:
+            return None
+        try:
+            i = self.parent.index(self)
+            # Prevent returning parent[-1] by checking for i > 0
+            return self.parent[i-1] if i > 0 else None
+        except (ValueError, IndexError):
+            return None
+
+    def previous_siblings(self):
+        """
+        Return an iterator of all siblings which precede this node.
+        
+        """
+        if self.parent is None:
+            return []
+        i = self.parent.index(self)
+        return self.parent[:i]
+
     def iter_ancestors(self):
         """
         Return a tree iterator of all ancestors in document order.
@@ -251,6 +302,12 @@ class Element(Node):
             self._children[index].parent = None
         del self._children[index]
 
+    def __iter__(self):
+        return iter(self._children)
+
+    def __contains__(self, node):
+        return node in self._children
+
     def _assert_is_node(self, node):
         if not is_node(node):
             raise TypeError('expected a Node, not {0}'.format(type(node).__name__))
@@ -260,6 +317,13 @@ class Element(Node):
             raise TypeError(
                 '{0} is an "empty" HTML element and cannot accept any children'.format(repr(self))
             )
+
+    def index(self, node):
+        """
+        Return the index of the given child node.
+
+        """
+        return self._children.index(node)
 
     def append(self, node):
         """
@@ -359,7 +423,7 @@ class Element(Node):
             classes.remove(value)
             self.set('class', ' '.join(classes).strip())
 
-    def iter(self, tags=None):
+    def iter_decendents(self, tags=None):
         """
         Return a tree iterator of this node and all decedents in document order.
 
@@ -371,10 +435,10 @@ class Element(Node):
         if len(tags) == 0 or self.tag in tags:
             yield self
         for c in self._children:
-            for gc in c.iter(tags):
+            for gc in c.iter_decendents(tags):
                 yield gc
 
-    def itertext(self, raw=False):
+    def iter_text(self, raw=False):
         """
         Return a tree iterator of all decedent text nodes in document order.
 
@@ -387,7 +451,7 @@ class Element(Node):
             if is_text(child):
                 yield child
             elif is_element(child):
-                for gc in child.itertext():
+                for gc in child.iter_text():
                     yield gc
 
 

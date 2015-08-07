@@ -170,6 +170,34 @@ class TestElement(unittest.TestCase):
         self.assertEqual(text2.parent, None)
         self.assertEqual(text1.parent, node)
 
+    def test_Element_iter_children(self):
+        node = htree.Element('p')
+        text1 = htree.Text('text1')
+        text2 = htree.Text('text2')
+        node.append(text1)
+        node.append(text2)
+        self.assertEqual([x for x in node], [text1, text2])
+
+    def test_Element_contains(self):
+        node = htree.Element('p')
+        text1 = htree.Text('text1')
+        node.append(text1)
+        self.assertTrue(text1 in node)
+        text2 = htree.Text('text2')
+        self.assertFalse(text2 in node)
+
+    def test_Element_index(self):
+        node = htree.Element('p')
+        text1 = htree.Text('text1')
+        node.append(text1)
+        text2 = htree.Text('text2')
+        node.append(text2)
+        self.assertEqual(node.index(text1), 0)
+        self.assertEqual(node.index(text2), 1)
+        text3 = htree.Text('text3')
+        with self.assertRaises(ValueError):
+            node.index(text3)
+
     def test_Element_append(self):
         node = htree.Element('p')
         text1 = htree.Text('text1')
@@ -255,6 +283,58 @@ class TestElement(unittest.TestCase):
         self.assertEqual(node[:], [])
         self.assertEqual(child.parent, None)
 
+    def test_Element_next_sibling(self):
+        node = htree.Element('p')
+        text1 = htree.Text('text1')
+        text2 = htree.Text('text2')
+        text3 = htree.Text('text3')
+        node.append(text1)
+        node.append(text2)
+        node.append(text3)
+        self.assertEqual(text1.next_sibling(), text2)
+        self.assertEqual(text2.next_sibling(), text3)
+        self.assertEqual(text3.next_sibling(), None)
+        self.assertEqual(node.next_sibling(), None)
+
+    def test_Element_previous_sibling(self):
+        node = htree.Element('p')
+        text1 = htree.Text('text1')
+        text2 = htree.Text('text2')
+        text3 = htree.Text('text3')
+        node.append(text1)
+        node.append(text2)
+        node.append(text3)
+        self.assertEqual(text1.previous_sibling(), None)
+        self.assertEqual(text2.previous_sibling(), text1)
+        self.assertEqual(text3.previous_sibling(), text2)
+        self.assertEqual(node.previous_sibling(), None)
+
+    def test_Element_next_siblings(self):
+        node = htree.Element('p')
+        text1 = htree.Text('text1')
+        text2 = htree.Text('text2')
+        text3 = htree.Text('text3')
+        node.append(text1)
+        node.append(text2)
+        node.append(text3)
+        self.assertEqual(text1.next_siblings(), [text2, text3])
+        self.assertEqual(text2.next_siblings(), [text3])
+        self.assertEqual(text3.next_siblings(), [])
+        self.assertEqual(node.next_siblings(), [])
+
+    def test_Element_previous_siblings(self):
+        node = htree.Element('p')
+        text1 = htree.Text('text1')
+        text2 = htree.Text('text2')
+        text3 = htree.Text('text3')
+        node.append(text1)
+        node.append(text2)
+        node.append(text3)
+        self.assertEqual(text1.previous_siblings(), [])
+        self.assertEqual(text2.previous_siblings(), [text1])
+        self.assertEqual(text3.previous_siblings(), [text1, text2])
+        self.assertEqual(node.previous_siblings(), [])
+
     def test_Element_attrib_get(self):
         node = htree.Element('p', id='foo')
         self.assertEqual(node.get('id'), 'foo')
@@ -289,7 +369,7 @@ class TestElement(unittest.TestCase):
         node.remove_class('missing')
         self.assertEqual(node.get('class'), 'foo baz')
 
-    def test_Element_iter(self):
+    def test_Element_iter_decendents(self):
         p = htree.Element('p')
         em = htree.Element('em')
         strong = htree.Element('strong')
@@ -299,10 +379,10 @@ class TestElement(unittest.TestCase):
         em.append(strong)
         strong.append(a1)
         p.append(a2)
-        self.assertEqual(list(p.iter()), [p, em, strong, a1, a2])
-        self.assertEqual(list(p.iter('em')), [em])
-        self.assertEqual(list(p.iter('a')), [a1, a2])
-        self.assertEqual(list(p.iter('br')), [])
+        self.assertEqual(list(p.iter_decendents()), [p, em, strong, a1, a2])
+        self.assertEqual(list(p.iter_decendents('em')), [em])
+        self.assertEqual(list(p.iter_decendents('a')), [a1, a2])
+        self.assertEqual(list(p.iter_decendents('br')), [])
 
     def test_Element_itertext(self):
         p = htree.Element('p')
@@ -324,9 +404,9 @@ class TestElement(unittest.TestCase):
         a1.append(a1text)
         p.append(a2)
         a2.append(a2text)
-        self.assertEqual(list(p.itertext()), [emtext, strongtext, a1text, a2text])
+        self.assertEqual(list(p.iter_text()), [emtext, strongtext, a1text, a2text])
         self.assertEqual(
-            list(p.itertext(raw=True)),
+            list(p.iter_text(raw=True)),
             [ptext, emtext, strongtext, a1text, a2text]
         )
 
