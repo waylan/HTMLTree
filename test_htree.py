@@ -19,6 +19,7 @@ class TestTypes(unittest.TestCase):
         self.assertFalse(htree.is_raw_text(node))
         self.assertFalse(htree.is_comment(node))
         self.assertFalse(htree.is_element(node))
+        self.assertFalse(htree.is_entity(node))
         self.assertTrue(repr(node).startswith('<Text node at '))
         self.assertEqual(node.parent, None)
 
@@ -30,6 +31,7 @@ class TestTypes(unittest.TestCase):
         self.assertTrue(htree.is_raw_text(node))
         self.assertFalse(htree.is_comment(node))
         self.assertFalse(htree.is_element(node))
+        self.assertFalse(htree.is_entity(node))
         self.assertTrue(repr(node).startswith('<RawText node at '))
         self.assertEqual(node.parent, None)
 
@@ -44,6 +46,7 @@ class TestTypes(unittest.TestCase):
         self.assertFalse(htree.is_raw_text(node))
         self.assertFalse(htree.is_comment(node))
         self.assertFalse(htree.is_element(node))
+        self.assertFalse(htree.is_entity(node))
         self.assertTrue(repr(node).startswith('<TextSubclass node at '))
         self.assertEqual(node.parent, None)
 
@@ -55,6 +58,7 @@ class TestTypes(unittest.TestCase):
         self.assertFalse(htree.is_raw_text(node))
         self.assertTrue(htree.is_comment(node))
         self.assertFalse(htree.is_element(node))
+        self.assertFalse(htree.is_entity(node))
         self.assertTrue(repr(node).startswith('<Comment node at '))
         self.assertEqual(node.parent, None)
 
@@ -66,9 +70,22 @@ class TestTypes(unittest.TestCase):
         self.assertFalse(htree.is_raw_text(node))
         self.assertFalse(htree.is_comment(node))
         self.assertTrue(htree.is_element(node))
+        self.assertFalse(htree.is_entity(node))
         self.assertTrue(repr(node).startswith('<Element node at '))
         self.assertEqual(node.parent, None)
         self.assertEqual(node.tag, None)
+
+    def test_Entity_type(self):
+        node = htree.Entity('amp')
+        self.assertTrue(htree.is_node(node))
+        self.assertFalse(htree.is_text(node))
+        self.assertFalse(htree.is_text(node, strict=True))
+        self.assertFalse(htree.is_raw_text(node))
+        self.assertFalse(htree.is_comment(node))
+        self.assertFalse(htree.is_element(node))
+        self.assertTrue(htree.is_entity(node))
+        self.assertTrue(repr(node).startswith('<Entity node at '))
+        self.assertEqual(node.parent, None)
 
     def test_non_node(self):
         obj = 'not a node'
@@ -78,6 +95,7 @@ class TestTypes(unittest.TestCase):
         self.assertFalse(htree.is_raw_text(obj))
         self.assertFalse(htree.is_comment(obj))
         self.assertFalse(htree.is_element(obj))
+        self.assertFalse(htree.is_entity(obj))
 
 
 class TestElement(unittest.TestCase):
@@ -479,6 +497,21 @@ class TestSerializer(unittest.TestCase):
             htree.to_string(node, format='xhtml'),
             '<!-- "text" &amp; &lt;tag&gt; -->'
         )
+
+    def test_Entity_name_to_string(self):
+        node = htree.Entity('amp')
+        self.assertEqual(htree.to_string(node), '&amp;')
+        self.assertEqual(htree.to_string(node, format='xhtml'), '&amp;')
+
+    def test_Entity_char_to_string(self):
+        node = htree.Entity('&')
+        self.assertEqual(htree.to_string(node), '&amp;')
+        self.assertEqual(htree.to_string(node, format='xhtml'), '&amp;')
+
+    def test_Entity_codepoint_to_string(self):
+        node = htree.Entity('0x0026')
+        self.assertEqual(htree.to_string(node), '&amp;')
+        self.assertEqual(htree.to_string(node, format='xhtml'), '&amp;')
 
     def test_Element_empty_tag_is_None_to_string(self):
         node = htree.Element()
