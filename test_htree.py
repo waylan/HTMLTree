@@ -679,6 +679,10 @@ class TestSerializer(unittest.TestCase):
     def test_escape_cdata_invalid(self):
         self.assertRaises(TypeError, htree._escape_cdata, None)
 
+    def test_to_bytes(self):
+        node = htree.Text('some text')
+        self.assertEqual(htree.to_bytes(node), 'some text'.encode(encoding='utf-8'))
+
 
 if __name__ == '__main__':
     unittest.main()

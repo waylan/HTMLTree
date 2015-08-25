@@ -43,6 +43,10 @@
 
 from __future__ import unicode_literals
 import sys
+try:
+    from html import entities
+except ImportError:
+    import htmlentitydefs as entities
 
 
 __version__ = '0.0.1'
@@ -59,6 +63,7 @@ __all__ = [
     'is_raw_text',
     'is_comment',
     'to_string',
+    'to_bytes'
 ]
 
 
@@ -127,6 +132,13 @@ def is_comment(node):
     return isinstance(node, Comment)
 
 
+def is_entity(node):
+    """
+    Returns True if object is an Entity node:
+    """
+    return isinstance(node, Entity)
+
+
 # --------------------------------------------------------------------
 # Nodes
 
@@ -160,7 +172,7 @@ class Node(object):
     def next_siblings(self):
         """
         Return an iterator of all siblings which follow this node.
-        
+
         """
         if self.parent is None:
             return []
@@ -186,7 +198,7 @@ class Node(object):
     def previous_siblings(self):
         """
         Return an iterator of all siblings which precede this node.
-        
+
         """
         if self.parent is None:
             return []
@@ -230,6 +242,30 @@ class RawText(Text):
     as raw text. Be warned that no escaping of any kind is done to raw text.
 
     """
+
+class Entity(Node, text_type):
+    """
+    Entity Node.
+
+    Contains a single HTML Entity. Accepts a single Unicode character, a
+    Unicode code point, or an HTML entity name. Renders as an HTML5 entity.
+
+    """
+    def __init__(self, obj):
+        original = obj
+        if isinstance(obj, text_type) and len(obj) == 1:
+            # Convert Unicode char to code point
+            obj = ord(obj)
+        if obj in entities.codepoint2name:
+            # Get name of code point
+            obj = entities.codepoint2name[obj]
+        # Ensure name ends with semicolon
+        name =  obj if obj.endswith(';') else obj + ';'
+        if name in entities.entitydefs or obj in entities.entitydefs:
+            # PY2 does not include semicolon in entitydef names so we also check obj
+            super(Entity, self).__init__('&'+name)
+        else:
+            raise TypeError('{0} is not a valid HTML Entity.'.format(repr(original)))
 
 
 class Element(Node):
@@ -523,7 +559,7 @@ def _escape_attrib(text):
 def _serialize_node(write, node, format):
     if is_comment(node):
         write('<!-- {0} -->'.format(_escape_cdata(node)))
-    elif is_raw_text(node):
+    elif is_raw_text(node) or is_entity(node):
         write(node)
     elif is_text(node):
         write(_escape_cdata(node))
@@ -560,7 +596,7 @@ def _serialize_node(write, node, format):
 
 def to_string(node, format='html'):
     """
-    Return a serialized string of a node and its children.
+    Return a serialized unicode string of a node and its children.
 
     `format` may be one of "html" or "xhtml".
     """
@@ -568,3 +604,14 @@ def to_string(node, format='html'):
     write = data.append
     _serialize_node(write, node, format)
     return "".join(data)
+
+
+def to_bytes(node, format='html', encoding='utf-8'):
+    """
+    Return a serialized byte string of a node and its children.
+
+    `format` may be one of "html" or "xhtml".
+
+    `encoding` defaults to utf-8.
+    """
+    return to_string(node, format).encode(encoding, "xmlcharrefreplace")
