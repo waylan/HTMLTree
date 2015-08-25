@@ -251,7 +251,7 @@ class Entity(Node, text_type):
     Unicode code point, or an HTML entity name. Renders as an HTML5 entity.
 
     """
-    def __init__(self, obj):
+    def __new__(cls, obj):
         original = obj
         if isinstance(obj, text_type) and len(obj) == 1:
             # Convert Unicode char to code point
@@ -261,9 +261,10 @@ class Entity(Node, text_type):
             obj = entities.codepoint2name[obj]
         # Ensure name ends with semicolon
         name =  obj if obj.endswith(';') else obj + ';'
+        # PY2 does not include semicolon in entitydef names so we also check obj
         if name in entities.entitydefs or obj in entities.entitydefs:
-            # PY2 does not include semicolon in entitydef names so we also check obj
-            super(Entity, self).__init__('&'+name)
+            # Unicode objects are imuttable, so return a new object
+            return super(Entity, cls).__new__(cls, '&'+name)
         else:
             raise TypeError('{0} is not a valid HTML Entity.'.format(repr(original)))
 

@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+from __future__ import unicode_literals
 import unittest
 import textwrap
 import htree
@@ -509,7 +510,7 @@ class TestSerializer(unittest.TestCase):
         self.assertEqual(htree.to_string(node, format='xhtml'), '&amp;')
 
     def test_Entity_codepoint_to_string(self):
-        node = htree.Entity('0x0026')
+        node = htree.Entity(0x0026)
         self.assertEqual(htree.to_string(node), '&amp;')
         self.assertEqual(htree.to_string(node, format='xhtml'), '&amp;')
 
