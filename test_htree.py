@@ -405,6 +405,7 @@ class TestElement(unittest.TestCase):
 
     def test_Element_itertext(self):
         p = htree.Element('p')
+        pentity = htree.Entity('&')
         ptext = htree.RawText('ptext')
         em = htree.Element('em')
         emtext = htree.Text('emtext')
@@ -414,6 +415,7 @@ class TestElement(unittest.TestCase):
         a1text = htree.Text('a1text')
         a2 = htree.Element('a')
         a2text = htree.Text('a2text')
+        p.append(pentity)
         p.append(ptext)
         p.append(em)
         em.append(emtext)
@@ -423,10 +425,14 @@ class TestElement(unittest.TestCase):
         a1.append(a1text)
         p.append(a2)
         a2.append(a2text)
-        self.assertEqual(list(p.iter_text()), [emtext, strongtext, a1text, a2text])
+        self.assertEqual(list(p.iter_text()), [pentity, emtext, strongtext, a1text, a2text])
         self.assertEqual(
             list(p.iter_text(raw=True)),
-            [ptext, emtext, strongtext, a1text, a2text]
+            [pentity, ptext, emtext, strongtext, a1text, a2text]
+        )
+        self.assertEqual(
+            list(p.iter_text(entities=False)),
+            [emtext, strongtext, a1text, a2text]
         )
 
     def test_Element_iter_ancestors(self):

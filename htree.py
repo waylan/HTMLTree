@@ -475,17 +475,18 @@ class Element(Node):
             for gc in c.iter_decendents(tags):
                 yield gc
 
-    def iter_text(self, raw=False):
+    def iter_text(self, entities=True, raw=False):
         """
         Return a tree iterator of all decedent text nodes in document order.
 
+        Set `entities` to `False to exclude Entity nodes.
         Set `raw` to `True` to include RawText nodes.
 
         """
         for child in self:
             if is_raw_text(child) and not raw:
                 continue
-            if is_text(child):
+            if is_text(child) or (is_entity(child) and entities):
                 yield child
             elif is_element(child):
                 for gc in child.iter_text():
