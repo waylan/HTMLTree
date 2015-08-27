@@ -617,3 +617,78 @@ def to_bytes(node, format='html', encoding='utf-8'):
     `encoding` defaults to utf-8.
     """
     return to_string(node, format).encode(encoding, "xmlcharrefreplace")
+
+
+# --------------------------------------------------------------------
+# Parser
+
+
+class TreeBuilderError(Exception):
+    pass
+
+
+class TreeBuilder(object):
+    """
+    Generic node structure builder.
+
+    Converts a sequance of `TreeBuilder.start`, `TreeBuilder.data` and
+    `TreeBuilder.end` method calls to a well-formed node structure.
+    Use this class to build a node structure using an HTML parser or
+    to convert from another HTML like format.
+    
+    Note that a single root element is required. If a document fragment
+    is being built, then you may need to create a root Element with a
+    tag of `None` first. All other nodes can then be created as children
+    of that root (None) Element.
+    """
+
+    def __init__(self):
+        self._nodes = []  # node stack
+        self._last = None  # Last node
+    
+    def close(self):
+        """
+        Returns the toplevel node.
+        """
+        if len(self._nodes) != 0:
+            raise TreeBuilderError('Missing end tags.')
+        if self._last is None:
+            raise TreeBuilderError('Missing toplevel element.')
+        return self._last
+
+    def start(self, tag, **attrs):
+        """
+        Open a new Element Node.
+        """
+        self._last = elem = Element(tag, **attrs)
+        if self._nodes:
+            self._nodes[-1].append(elem)
+        self._nodes.append(elem)
+
+    def end(self, tag):
+        """
+        Close the current Element node.
+        """
+        if self._nodes and self._nodes[-1].tag == tag:
+            self._last = self._nodes.pop()
+        elif self._nodes:
+            expected = self._nodes[-1].tag
+            raise TreeBuilderError('End tag mismatch (expected {0}, got {1})'.format(expected, tag))
+        else:
+            raise TreeBuilderError('No nodes to close.')
+
+    def data(self, data, node_type=None):
+        """
+        Add a non-element node to the current Element node.
+        
+        `node_type` should be the class of the desired node type. Defaults to `Text`.
+        """
+        node_type = node_type or Text
+        node = node_type(data)
+        if self._nodes:
+            self._nodes[-1].append(node)
+        else:
+            raise TreeBuilderError('Missing toplevel element.')
+
+    
+    

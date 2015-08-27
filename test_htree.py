@@ -691,5 +691,121 @@ class TestSerializer(unittest.TestCase):
         self.assertEqual(htree.to_bytes(node), 'some text'.encode(encoding='utf-8'))
 
 
+class TestTreeBuilder(unittest.TestCase):
+    def test_builder_Text(self):
+        builder = htree.TreeBuilder()
+        builder.start('p', id='foo')
+        builder.data('bar')
+        builder.end('p')
+        doc = builder.close()
+        self.assertEqual(htree.to_string(doc), '<p id="foo">bar</p>\n')
+        self.assertTrue(isinstance(doc[0], htree.Text))
+    
+    def test_builder_RawText(self):
+        builder = htree.TreeBuilder()
+        builder.start('p')
+        builder.data('<em>bar</em>', node_type=htree.RawText)
+        builder.end('p')
+        doc = builder.close()
+        self.assertEqual(htree.to_string(doc), '<p><em>bar</em></p>\n')
+        self.assertTrue(isinstance(doc[0], htree.RawText))
+    
+    def test_builder_Comment(self):
+        builder = htree.TreeBuilder()
+        builder.start('p')
+        builder.data('a comment', node_type=htree.Comment)
+        builder.end('p')
+        doc = builder.close()
+        self.assertEqual(htree.to_string(doc), '<p><!-- a comment --></p>\n')
+        self.assertTrue(isinstance(doc[0], htree.Comment))
+    
+    def test_builder_Entity(self):
+        builder = htree.TreeBuilder()
+        builder.start('p')
+        builder.data('&', node_type=htree.Entity)
+        builder.end('p')
+        doc = builder.close()
+        self.assertEqual(htree.to_string(doc), '<p>&amp;</p>\n')
+        self.assertTrue(isinstance(doc[0], htree.Entity))
+    
+    def test_builder_nesting(self):
+        builder = htree.TreeBuilder()
+        builder.start('p', id='foo')
+        builder.data('Bar ')
+        builder.start('em')
+        builder.data('italics ')
+        builder.start('strong')
+        builder.data('bold ')
+        builder.start('a', href='http://example.com')
+        builder.data('link')
+        builder.end('a')
+        builder.data(' bold')
+        builder.end('strong')
+        builder.data(' italics')
+        builder.end('em')
+        builder.data('.')
+        builder.end('p')
+        doc = builder.close()
+        self.assertEqual(
+            htree.to_string(doc),
+            '<p id="foo">Bar <em>italics <strong>bold '
+            '<a href="http://example.com">link</a> '
+            'bold</strong> italics</em>.</p>\n'
+        )
+    
+    def test_builder_multiple_children(self):
+        builder = htree.TreeBuilder()
+        builder.start('div')
+        builder.start('p', id='1')
+        builder.data('Paragraph 1')
+        builder.end('p')
+        builder.start('p', id='2')
+        builder.data('Paragraph 2')
+        builder.end('p')
+        builder.start('p', id='3')
+        builder.data('Paragraph 3')
+        builder.end('p')
+        builder.end('div')
+        doc = builder.close()
+        self.assertEqual(
+            htree.to_string(doc),
+            dedent(
+                '''
+                <div>
+                <p id="1">Paragraph 1</p>
+                <p id="2">Paragraph 2</p>
+                <p id="3">Paragraph 3</p>
+                </div>
+                '''
+            )
+        )
+    
+    def test_builder_close_empty(self):
+        builder = htree.TreeBuilder()
+        with self.assertRaises(htree.TreeBuilderError):
+            builder.close()
+    
+    def test_builder_close_prematurely(self):
+        builder = htree.TreeBuilder()
+        builder.start('div')
+        with self.assertRaises(htree.TreeBuilderError):
+            builder.close()
+        
+    def test_builder_tag_mismatch(self):
+        builder = htree.TreeBuilder()
+        builder.start('div')
+        with self.assertRaises(htree.TreeBuilderError):
+            builder.end('p')
+    
+    def test_builder_end_prematurely(self):
+        builder = htree.TreeBuilder()
+        with self.assertRaises(htree.TreeBuilderError):
+            builder.end('p')
+    
+    def test_builder_data_prematurely(self):
+        builder = htree.TreeBuilder()
+        with self.assertRaises(htree.TreeBuilderError):
+            builder.data('some text')
+
 if __name__ == '__main__':
     unittest.main()
