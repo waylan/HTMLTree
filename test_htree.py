@@ -700,7 +700,7 @@ class TestTreeBuilder(unittest.TestCase):
         doc = builder.close()
         self.assertEqual(htree.to_string(doc), '<p id="foo">bar</p>\n')
         self.assertTrue(isinstance(doc[0], htree.Text))
-    
+
     def test_builder_RawText(self):
         builder = htree.TreeBuilder()
         builder.start('p')
@@ -709,7 +709,7 @@ class TestTreeBuilder(unittest.TestCase):
         doc = builder.close()
         self.assertEqual(htree.to_string(doc), '<p><em>bar</em></p>\n')
         self.assertTrue(isinstance(doc[0], htree.RawText))
-    
+
     def test_builder_Comment(self):
         builder = htree.TreeBuilder()
         builder.start('p')
@@ -718,7 +718,7 @@ class TestTreeBuilder(unittest.TestCase):
         doc = builder.close()
         self.assertEqual(htree.to_string(doc), '<p><!-- a comment --></p>\n')
         self.assertTrue(isinstance(doc[0], htree.Comment))
-    
+
     def test_builder_Entity(self):
         builder = htree.TreeBuilder()
         builder.start('p')
@@ -727,7 +727,7 @@ class TestTreeBuilder(unittest.TestCase):
         doc = builder.close()
         self.assertEqual(htree.to_string(doc), '<p>&amp;</p>\n')
         self.assertTrue(isinstance(doc[0], htree.Entity))
-    
+
     def test_builder_nesting(self):
         builder = htree.TreeBuilder()
         builder.start('p', id='foo')
@@ -752,7 +752,7 @@ class TestTreeBuilder(unittest.TestCase):
             '<a href="http://example.com">link</a> '
             'bold</strong> italics</em>.</p>\n'
         )
-    
+
     def test_builder_multiple_children(self):
         builder = htree.TreeBuilder()
         builder.start('div')
@@ -779,33 +779,82 @@ class TestTreeBuilder(unittest.TestCase):
                 '''
             )
         )
-    
-    def test_builder_close_empty(self):
+
+    def test_builder_empty_tag(self):
+        builder = htree.TreeBuilder()
+        builder.start('div')
+        builder.data('before')
+        builder.start('hr')
+        builder.end('hr')  # <= Must explicitly close empty tag!
+        builder.data('after')
+        builder.end('div')
+        doc = builder.close()
+        self.assertEqual(
+            htree.to_string(doc),
+            dedent(
+                '''
+                <div>
+                before<hr>
+                after</div>
+                '''
+            )
+        )
+
+    def test_builder_empty_not_closed(self):
+        builder = htree.TreeBuilder()
+        builder.start('div')
+        builder.data('before')
+        builder.start('hr')
+        with self.assertRaises(TypeError):
+            builder.data('after')
+
+    def test_builder_close_no_open(self):
         builder = htree.TreeBuilder()
         with self.assertRaises(htree.TreeBuilderError):
             builder.close()
-    
+
     def test_builder_close_prematurely(self):
         builder = htree.TreeBuilder()
         builder.start('div')
         with self.assertRaises(htree.TreeBuilderError):
             builder.close()
-        
+
     def test_builder_tag_mismatch(self):
         builder = htree.TreeBuilder()
         builder.start('div')
         with self.assertRaises(htree.TreeBuilderError):
             builder.end('p')
-    
+
     def test_builder_end_prematurely(self):
         builder = htree.TreeBuilder()
         with self.assertRaises(htree.TreeBuilderError):
             builder.end('p')
-    
+
     def test_builder_data_prematurely(self):
         builder = htree.TreeBuilder()
         with self.assertRaises(htree.TreeBuilderError):
             builder.data('some text')
+
+    def test_builder_close_then_open(self):
+        builder = htree.TreeBuilder()
+        builder.start('div')
+        builder.end('div')
+        builder.start('p')
+        builder.end('p')
+        doc = builder.close()
+        # The first root element is lost. Can only have one root.
+        self.assertEqual(htree.to_string(doc),'<p></p>\n')
+
+    def test_builder_none_root(self):
+        builder = htree.TreeBuilder()
+        builder.start(None)
+        builder.start('div')
+        builder.end('div')
+        builder.start('p')
+        builder.end('p')
+        builder.end(None)
+        doc = builder.close()
+        self.assertEqual(htree.to_string(doc), '<div></div>\n<p></p>\n')
 
 if __name__ == '__main__':
     unittest.main()

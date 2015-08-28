@@ -635,17 +635,22 @@ class TreeBuilder(object):
     `TreeBuilder.end` method calls to a well-formed node structure.
     Use this class to build a node structure using an HTML parser or
     to convert from another HTML like format.
-    
+
     Note that a single root element is required. If a document fragment
     is being built, then you may need to create a root Element with a
     tag of `None` first. All other nodes can then be created as children
     of that root (None) Element.
+
+    Empty tags must be explicitly closed. A call to `TreeBuilder.end` must
+    be made immediatly after the call to `TreeBuilder.start`. Otherwise,
+    an attempt will be made to append children to an empty tag, which will
+    generate an error.
     """
 
     def __init__(self):
         self._nodes = []  # node stack
         self._last = None  # Last node
-    
+
     def close(self):
         """
         Returns the toplevel node.
@@ -680,7 +685,7 @@ class TreeBuilder(object):
     def data(self, data, node_type=None):
         """
         Add a non-element node to the current Element node.
-        
+
         `node_type` should be the class of the desired node type. Defaults to `Text`.
         """
         node_type = node_type or Text
@@ -690,5 +695,5 @@ class TreeBuilder(object):
         else:
             raise TreeBuilderError('Missing toplevel element.')
 
-    
-    
+
+
