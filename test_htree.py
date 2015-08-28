@@ -13,7 +13,7 @@ def dedent(text):
 class TestTypes(unittest.TestCase):
 
     def test_Text_type(self):
-        node = htree.Text('some text')
+        node = htree.Text('Some text.')
         self.assertTrue(htree.is_node(node))
         self.assertTrue(htree.is_text(node))
         self.assertTrue(htree.is_text(node, strict=True))
@@ -21,11 +21,11 @@ class TestTypes(unittest.TestCase):
         self.assertFalse(htree.is_comment(node))
         self.assertFalse(htree.is_element(node))
         self.assertFalse(htree.is_entity(node))
-        self.assertTrue(repr(node).startswith('<Text node at '))
+        self.assertTrue(repr(node).startswith('<Text("Some t...") at '))
         self.assertEqual(node.parent, None)
 
     def test_RawText_type(self):
-        node = htree.RawText('some text')
+        node = htree.RawText('Some text.')
         self.assertTrue(htree.is_node(node))
         self.assertTrue(htree.is_text(node))
         self.assertFalse(htree.is_text(node, strict=True))
@@ -33,13 +33,13 @@ class TestTypes(unittest.TestCase):
         self.assertFalse(htree.is_comment(node))
         self.assertFalse(htree.is_element(node))
         self.assertFalse(htree.is_entity(node))
-        self.assertTrue(repr(node).startswith('<RawText node at '))
+        self.assertTrue(repr(node).startswith('<RawText("Some t...") at '))
         self.assertEqual(node.parent, None)
 
     def test_Text_subclass_type(self):
         class TextSubclass(htree.Text):
             pass
-        node = TextSubclass('some text')
+        node = TextSubclass('Some text.')
         self.assertTrue(isinstance(node, TextSubclass))
         self.assertTrue(htree.is_node(node))
         self.assertTrue(htree.is_text(node))
@@ -48,11 +48,11 @@ class TestTypes(unittest.TestCase):
         self.assertFalse(htree.is_comment(node))
         self.assertFalse(htree.is_element(node))
         self.assertFalse(htree.is_entity(node))
-        self.assertTrue(repr(node).startswith('<TextSubclass node at '))
+        self.assertTrue(repr(node).startswith('<TextSubclass("Some t...") at '))
         self.assertEqual(node.parent, None)
 
     def test_Comment_type(self):
-        node = htree.Comment('some text')
+        node = htree.Comment('Some text.')
         self.assertTrue(htree.is_node(node))
         self.assertFalse(htree.is_text(node))
         self.assertFalse(htree.is_text(node, strict=True))
@@ -60,7 +60,7 @@ class TestTypes(unittest.TestCase):
         self.assertTrue(htree.is_comment(node))
         self.assertFalse(htree.is_element(node))
         self.assertFalse(htree.is_entity(node))
-        self.assertTrue(repr(node).startswith('<Comment node at '))
+        self.assertTrue(repr(node).startswith('<Comment("Some t...") at '))
         self.assertEqual(node.parent, None)
 
     def test_Element_type(self):
@@ -72,7 +72,7 @@ class TestTypes(unittest.TestCase):
         self.assertFalse(htree.is_comment(node))
         self.assertTrue(htree.is_element(node))
         self.assertFalse(htree.is_entity(node))
-        self.assertTrue(repr(node).startswith('<Element node at '))
+        self.assertTrue(repr(node).startswith('<Element("None") at '))
         self.assertEqual(node.parent, None)
         self.assertEqual(node.tag, None)
 
@@ -85,7 +85,7 @@ class TestTypes(unittest.TestCase):
         self.assertFalse(htree.is_comment(node))
         self.assertFalse(htree.is_element(node))
         self.assertTrue(htree.is_entity(node))
-        self.assertTrue(repr(node).startswith('<Entity node at '))
+        self.assertTrue(repr(node).startswith('<Entity("&amp;") at '))
         self.assertEqual(node.parent, None)
 
     def test_non_node(self):

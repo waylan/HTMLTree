@@ -152,7 +152,7 @@ class Node(object):
     parent = None
 
     def __repr__(self):
-        return '<{0} node at {1:#x}>'.format(self.__class__.__name__, id(self))
+        return '<{0}() at {1:#x}>'.format(self.__class__.__name__, id(self))
 
     def next_sibling(self):
         """
@@ -216,7 +216,19 @@ class Node(object):
                 yield p
 
 
-class Comment(Node, text_type):
+class BaseTextNode(Node, text_type):
+    """
+    Base text node. A node which holds textlike content.
+
+    Do not use this class directly. Use the various subclasses instead.
+    """
+
+    def __repr__(self):
+        truncated = '{0}...'.format(self[:6]) if len(self) > 9 else self
+        return '<{0}("{1}") at {2:#x}>'.format(self.__class__.__name__, truncated, id(self))
+
+
+class Comment(BaseTextNode):
     """
     Comment node.
 
@@ -225,7 +237,7 @@ class Comment(Node, text_type):
     """
 
 
-class Text(Node, text_type):
+class Text(BaseTextNode):
     """
     Text node.
 
@@ -243,7 +255,7 @@ class RawText(Text):
 
     """
 
-class Entity(Node, text_type):
+class Entity(BaseTextNode):
     """
     Entity Node.
 
@@ -303,6 +315,9 @@ class Element(Node):
         self.tag = tag
         self.attrib = attrib
         self._children = []
+
+    def __repr__(self):
+        return '<{0}("{1}") at {2:#x}>'.format(self.__class__.__name__, self.tag, id(self))
 
     def copy(self):
         """
@@ -694,6 +709,3 @@ class TreeBuilder(object):
             self._nodes[-1].append(node)
         else:
             raise TreeBuilderError('Missing toplevel element.')
-
-
-
