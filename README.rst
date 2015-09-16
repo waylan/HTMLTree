@@ -52,13 +52,12 @@ And then some child Elements::
 
 Let's see what that looks like when serialized to a string::
 
-    >>> from htree import to_string
-    >>> to_string(p)
+    >>> p.to_string()
     '<p id="awesome">This is <em>really <strong>awesome</strong></em>!</p>\n`
 
 You can serialize any node within the tree::
 
-    >>> to_string(strong)
+    >>> strong.to_string()
     '<strong>awesome</strong>
 
 Every Node (including Text nodes) contains a reference to its parent::
@@ -76,7 +75,7 @@ then create an Element with its tag set to `None`::
     >>> section1 = Element('div', id='section-1')
     >>> section2 = Element('div', id='section-2')
     >>> container.extend([section1, section2])
-    >>> to_string(container)
+    >>> container.to_string()
     '<div id="section-1"></div>\n<div id="section-2"></div>\n'
 
 Children can be accessed as nested lists. For Example, determine the number of child
@@ -90,7 +89,7 @@ You can iterate over the children::
     >>> for child in container:
     >>>     child.append(p.copy())
     >>>
-    >>> print(to_string(container))
+    >>> print(container.to_string())
     <div id="section-1">
     <p id="awesome">This is <em>really <strong>awesome</strong></em>!</p>
     </div>

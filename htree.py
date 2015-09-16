@@ -215,6 +215,27 @@ class Node(object):
             for p in self.parent.iter_ancestors():
                 yield p
 
+    def to_string(self, format='html'):
+        """
+        Return a serialized unicode string of a node and its children.
+
+        `format` may be one of "html" or "xhtml".
+        """
+        data = []
+        write = data.append
+        _serialize_node(write, self, format)
+        return "".join(data)
+
+    def to_bytes(self, format='html', encoding='utf-8'):
+        """
+        Return a serialized byte string of a node and its children.
+
+        `format` may be one of "html" or "xhtml".
+
+        `encoding` defaults to utf-8.
+        """
+        return self.to_string(format).encode(encoding, "xmlcharrefreplace")
+
 
 class BaseTextNode(Node, text_type):
     """
@@ -609,29 +630,6 @@ def _serialize_node(write, node, format):
                 write('\n')
     else:
         _raise_serialization_error(node)
-
-
-def to_string(node, format='html'):
-    """
-    Return a serialized unicode string of a node and its children.
-
-    `format` may be one of "html" or "xhtml".
-    """
-    data = []
-    write = data.append
-    _serialize_node(write, node, format)
-    return "".join(data)
-
-
-def to_bytes(node, format='html', encoding='utf-8'):
-    """
-    Return a serialized byte string of a node and its children.
-
-    `format` may be one of "html" or "xhtml".
-
-    `encoding` defaults to utf-8.
-    """
-    return to_string(node, format).encode(encoding, "xmlcharrefreplace")
 
 
 # --------------------------------------------------------------------

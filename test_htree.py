@@ -454,31 +454,31 @@ class TestSerializer(unittest.TestCase):
 
     def test_Text_to_string(self):
         node = htree.Text('some text')
-        self.assertEqual(htree.to_string(node), 'some text')
-        self.assertEqual(htree.to_string(node, format='xhtml'), 'some text')
+        self.assertEqual(node.to_string(), 'some text')
+        self.assertEqual(node.to_string(format='xhtml'), 'some text')
 
     def test_Text_subclass_to_string(self):
         class TextSubclass(htree.Text):
             pass
         node = TextSubclass('some text')
-        self.assertEqual(htree.to_string(node), 'some text')
-        self.assertEqual(htree.to_string(node, format='xhtml'), 'some text')
+        self.assertEqual(node.to_string(), 'some text')
+        self.assertEqual(node.to_string(format='xhtml'), 'some text')
 
     def test_RawText_to_string(self):
         node = htree.RawText('some text')
-        self.assertEqual(htree.to_string(node), 'some text')
-        self.assertEqual(htree.to_string(node, format='xhtml'), 'some text')
+        self.assertEqual(node.to_string(), 'some text')
+        self.assertEqual(node.to_string(format='xhtml'), 'some text')
 
     def test_Comment_to_string(self):
         node = htree.Comment('some text')
-        self.assertEqual(htree.to_string(node), '<!-- some text -->')
-        self.assertEqual(htree.to_string(node, format='xhtml'), '<!-- some text -->')
+        self.assertEqual(node.to_string(), '<!-- some text -->')
+        self.assertEqual(node.to_string(format='xhtml'), '<!-- some text -->')
 
     def test_Text_escape_to_string(self):
         node = htree.Text('text & <tag>')
-        self.assertEqual(htree.to_string(node), 'text &amp; &lt;tag&gt;')
+        self.assertEqual(node.to_string(), 'text &amp; &lt;tag&gt;')
         self.assertEqual(
-            htree.to_string(node, format='xhtml'),
+            node.to_string(format='xhtml'),
             'text &amp; &lt;tag&gt;'
         )
 
@@ -486,78 +486,78 @@ class TestSerializer(unittest.TestCase):
         class TextSubclass(htree.Text):
             pass
         node = TextSubclass('"text" & <tag>')
-        self.assertEqual(htree.to_string(node), '"text" &amp; &lt;tag&gt;')
+        self.assertEqual(node.to_string(), '"text" &amp; &lt;tag&gt;')
         self.assertEqual(
-            htree.to_string(node, format='xhtml'),
+            node.to_string(format='xhtml'),
             '"text" &amp; &lt;tag&gt;'
         )
 
     def test_RawText_escape_to_string(self):
         node = htree.RawText('"text" & <tag>')
-        self.assertEqual(htree.to_string(node), '"text" & <tag>')
-        self.assertEqual(htree.to_string(node, format='xhtml'), '"text" & <tag>')
+        self.assertEqual(node.to_string(), '"text" & <tag>')
+        self.assertEqual(node.to_string(format='xhtml'), '"text" & <tag>')
 
     def test_Comment_escape_to_string(self):
         node = htree.Comment('"text" & <tag>')
-        self.assertEqual(htree.to_string(node), '<!-- "text" &amp; &lt;tag&gt; -->')
+        self.assertEqual(node.to_string(), '<!-- "text" &amp; &lt;tag&gt; -->')
         self.assertEqual(
-            htree.to_string(node, format='xhtml'),
+            node.to_string(format='xhtml'),
             '<!-- "text" &amp; &lt;tag&gt; -->'
         )
 
     def test_Entity_name_to_string(self):
         node = htree.Entity('amp')
-        self.assertEqual(htree.to_string(node), '&amp;')
-        self.assertEqual(htree.to_string(node, format='xhtml'), '&amp;')
+        self.assertEqual(node.to_string(), '&amp;')
+        self.assertEqual(node.to_string(format='xhtml'), '&amp;')
 
     def test_Entity_char_to_string(self):
         node = htree.Entity('&')
-        self.assertEqual(htree.to_string(node), '&amp;')
-        self.assertEqual(htree.to_string(node, format='xhtml'), '&amp;')
+        self.assertEqual(node.to_string(), '&amp;')
+        self.assertEqual(node.to_string(format='xhtml'), '&amp;')
 
     def test_Entity_codepoint_to_string(self):
         node = htree.Entity(0x0026)
-        self.assertEqual(htree.to_string(node), '&amp;')
-        self.assertEqual(htree.to_string(node, format='xhtml'), '&amp;')
+        self.assertEqual(node.to_string(), '&amp;')
+        self.assertEqual(node.to_string(format='xhtml'), '&amp;')
 
     def test_Element_empty_tag_is_None_to_string(self):
         node = htree.Element()
-        self.assertEqual(htree.to_string(node), '')
-        self.assertEqual(htree.to_string(node, format='xhtml'), '')
+        self.assertEqual(node.to_string(), '')
+        self.assertEqual(node.to_string(format='xhtml'), '')
 
     def test_Element_empty_tag_is_empty_to_string(self):
         node = htree.Element('br')
-        self.assertEqual(htree.to_string(node), '<br>\n')
-        self.assertEqual(htree.to_string(node, format='xhtml'), '<br />\n')
+        self.assertEqual(node.to_string(), '<br>\n')
+        self.assertEqual(node.to_string(format='xhtml'), '<br />\n')
 
     def test_Element_empty_tag_not_empty_to_string(self):
         node = htree.Element('p')
-        self.assertEqual(htree.to_string(node), '<p></p>\n')
-        self.assertEqual(htree.to_string(node, format='xhtml'), '<p></p>\n')
+        self.assertEqual(node.to_string(), '<p></p>\n')
+        self.assertEqual(node.to_string(format='xhtml'), '<p></p>\n')
 
     def test_Element_with_text_tag_is_None_to_string(self):
         node = htree.Element()
         node.append(htree.Text('some text'))
-        self.assertEqual(htree.to_string(node), 'some text')
-        self.assertEqual(htree.to_string(node, format='xhtml'), 'some text')
+        self.assertEqual(node.to_string(), 'some text')
+        self.assertEqual(node.to_string(format='xhtml'), 'some text')
 
     def test_Element_with_child_tag_is_None_to_string(self):
         node = htree.Element()
         node.append(htree.Element('p'))
-        self.assertEqual(htree.to_string(node), '<p></p>\n')
-        self.assertEqual(htree.to_string(node, format='xhtml'), '<p></p>\n')
+        self.assertEqual(node.to_string(), '<p></p>\n')
+        self.assertEqual(node.to_string(format='xhtml'), '<p></p>\n')
 
     def test_Element_with_children_tag_is_None_to_string(self):
         node = htree.Element()
         node.extend([htree.Element('p'), htree.Element('br'), htree.Element('hr')])
-        self.assertEqual(htree.to_string(node), dedent(
+        self.assertEqual(node.to_string(), dedent(
             '''
             <p></p>
             <br>
             <hr>
             '''
         ))
-        self.assertEqual(htree.to_string(node, format='xhtml'), dedent(
+        self.assertEqual(node.to_string(format='xhtml'), dedent(
             '''
             <p></p>
             <br />
@@ -568,20 +568,20 @@ class TestSerializer(unittest.TestCase):
     def test_Element_with_text_to_string(self):
         node = htree.Element('p')
         node.append(htree.Text('some text'))
-        self.assertEqual(htree.to_string(node), '<p>some text</p>\n')
-        self.assertEqual(htree.to_string(node, format='xhtml'), '<p>some text</p>\n')
+        self.assertEqual(node.to_string(), '<p>some text</p>\n')
+        self.assertEqual(node.to_string(format='xhtml'), '<p>some text</p>\n')
 
     def test_Element_with_child_to_string(self):
         node = htree.Element('div')
         node.append(htree.Element('p'))
-        self.assertEqual(htree.to_string(node), dedent(
+        self.assertEqual(node.to_string(), dedent(
             '''
             <div>
             <p></p>
             </div>
             '''
         ))
-        self.assertEqual(htree.to_string(node, format='xhtml'), dedent(
+        self.assertEqual(node.to_string(format='xhtml'), dedent(
             '''
             <div>
             <p></p>
@@ -592,7 +592,7 @@ class TestSerializer(unittest.TestCase):
     def test_Element_with_children_to_string(self):
         node = htree.Element('div')
         node.extend([htree.Element('div'), htree.Element('hr'), htree.Element('img')])
-        self.assertEqual(htree.to_string(node), dedent(
+        self.assertEqual(node.to_string(), dedent(
             '''
             <div>
             <div></div>
@@ -601,7 +601,7 @@ class TestSerializer(unittest.TestCase):
             </div>
             '''
         ))
-        self.assertEqual(htree.to_string(node, format='xhtml'), dedent(
+        self.assertEqual(node.to_string(format='xhtml'), dedent(
             '''
             <div>
             <div></div>
@@ -620,14 +620,14 @@ class TestSerializer(unittest.TestCase):
         p.append(em)
         p.append(htree.Text('.'))
         div.append(p)
-        self.assertEqual(htree.to_string(div), dedent(
+        self.assertEqual(div.to_string(), dedent(
             '''
             <div>
             <p>Some text <em>with emphasis</em>.</p>
             </div>
             '''
         ))
-        self.assertEqual(htree.to_string(div, format='xhtml'), dedent(
+        self.assertEqual(div.to_string(format='xhtml'), dedent(
             '''
             <div>
             <p>Some text <em>with emphasis</em>.</p>
@@ -639,12 +639,12 @@ class TestSerializer(unittest.TestCase):
         p = htree.Element('p', id='foo')
         img = htree.Element('img', src='example.jpg', alt='An image.')
         p.append(img)
-        self.assertEqual(htree.to_string(p), dedent(
+        self.assertEqual(p.to_string(), dedent(
             '''
             <p id="foo"><img alt="An image." src="example.jpg"></p>
             '''
         ))
-        self.assertEqual(htree.to_string(p, format='xhtml'), dedent(
+        self.assertEqual(p.to_string(format='xhtml'), dedent(
             '''
             <p id="foo"><img alt="An image." src="example.jpg" /></p>
             '''
@@ -655,22 +655,22 @@ class TestSerializer(unittest.TestCase):
         inpt.set('name', 'foo')
         inpt.set('type', 'checkbox')
         self.assertEqual(
-            htree.to_string(inpt),
+            inpt.to_string(),
             '<input checked disabled name="foo" type="checkbox">'
         )
         self.assertEqual(
-            htree.to_string(inpt, format='xhtml'),
+            inpt.to_string(format='xhtml'),
             '<input checked="checked" disabled="disabled" name="foo" type="checkbox" />'
         )
 
     def test_Element_with_attr_escape_to_string(self):
         img = htree.Element('img', src='example.jpg', alt='"text" & <tag>')
-        self.assertEqual(htree.to_string(img), dedent(
+        self.assertEqual(img.to_string(), dedent(
             '''
             <img alt="&quot;text&quot; &amp; &lt;tag&gt;" src="example.jpg">
             '''
         ))
-        self.assertEqual(htree.to_string(img, format='xhtml'), dedent(
+        self.assertEqual(img.to_string(format='xhtml'), dedent(
             '''
             <img alt="&quot;text&quot; &amp; &lt;tag&gt;" src="example.jpg" />
             '''
@@ -678,17 +678,14 @@ class TestSerializer(unittest.TestCase):
 
     def test_Element_with_invalid_attr_to_string(self):
         p = htree.Element('p', id=None)
-        self.assertRaises(TypeError, htree.to_string, p)
-
-    def test_invalid_node_to_string(self):
-        self.assertRaises(TypeError, htree.to_string, None)
+        self.assertRaises(TypeError, p.to_string)
 
     def test_escape_cdata_invalid(self):
         self.assertRaises(TypeError, htree._escape_cdata, None)
 
     def test_to_bytes(self):
         node = htree.Text('some text')
-        self.assertEqual(htree.to_bytes(node), 'some text'.encode(encoding='utf-8'))
+        self.assertEqual(node.to_bytes(), 'some text'.encode(encoding='utf-8'))
 
 
 class TestTreeBuilder(unittest.TestCase):
@@ -698,7 +695,7 @@ class TestTreeBuilder(unittest.TestCase):
         builder.data('bar')
         builder.end('p')
         doc = builder.close()
-        self.assertEqual(htree.to_string(doc), '<p id="foo">bar</p>\n')
+        self.assertEqual(doc.to_string(), '<p id="foo">bar</p>\n')
         self.assertTrue(isinstance(doc[0], htree.Text))
 
     def test_builder_RawText(self):
@@ -707,7 +704,7 @@ class TestTreeBuilder(unittest.TestCase):
         builder.data('<em>bar</em>', node_type=htree.RawText)
         builder.end('p')
         doc = builder.close()
-        self.assertEqual(htree.to_string(doc), '<p><em>bar</em></p>\n')
+        self.assertEqual(doc.to_string(), '<p><em>bar</em></p>\n')
         self.assertTrue(isinstance(doc[0], htree.RawText))
 
     def test_builder_Comment(self):
@@ -716,7 +713,7 @@ class TestTreeBuilder(unittest.TestCase):
         builder.data('a comment', node_type=htree.Comment)
         builder.end('p')
         doc = builder.close()
-        self.assertEqual(htree.to_string(doc), '<p><!-- a comment --></p>\n')
+        self.assertEqual(doc.to_string(), '<p><!-- a comment --></p>\n')
         self.assertTrue(isinstance(doc[0], htree.Comment))
 
     def test_builder_Entity(self):
@@ -725,7 +722,7 @@ class TestTreeBuilder(unittest.TestCase):
         builder.data('&', node_type=htree.Entity)
         builder.end('p')
         doc = builder.close()
-        self.assertEqual(htree.to_string(doc), '<p>&amp;</p>\n')
+        self.assertEqual(doc.to_string(), '<p>&amp;</p>\n')
         self.assertTrue(isinstance(doc[0], htree.Entity))
 
     def test_builder_nesting(self):
@@ -747,7 +744,7 @@ class TestTreeBuilder(unittest.TestCase):
         builder.end('p')
         doc = builder.close()
         self.assertEqual(
-            htree.to_string(doc),
+            doc.to_string(),
             '<p id="foo">Bar <em>italics <strong>bold '
             '<a href="http://example.com">link</a> '
             'bold</strong> italics</em>.</p>\n'
@@ -768,7 +765,7 @@ class TestTreeBuilder(unittest.TestCase):
         builder.end('div')
         doc = builder.close()
         self.assertEqual(
-            htree.to_string(doc),
+            doc.to_string(),
             dedent(
                 '''
                 <div>
@@ -790,7 +787,7 @@ class TestTreeBuilder(unittest.TestCase):
         builder.end('div')
         doc = builder.close()
         self.assertEqual(
-            htree.to_string(doc),
+            doc.to_string(),
             dedent(
                 '''
                 <div>
@@ -843,7 +840,7 @@ class TestTreeBuilder(unittest.TestCase):
         builder.end('p')
         doc = builder.close()
         # The first root element is lost. Can only have one root.
-        self.assertEqual(htree.to_string(doc),'<p></p>\n')
+        self.assertEqual(doc.to_string(),'<p></p>\n')
 
     def test_builder_none_root(self):
         builder = htree.TreeBuilder()
@@ -854,7 +851,7 @@ class TestTreeBuilder(unittest.TestCase):
         builder.end('p')
         builder.end(None)
         doc = builder.close()
-        self.assertEqual(htree.to_string(doc), '<div></div>\n<p></p>\n')
+        self.assertEqual(doc.to_string(), '<div></div>\n<p></p>\n')
 
 if __name__ == '__main__':
     unittest.main()
