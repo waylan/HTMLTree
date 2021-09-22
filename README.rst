@@ -130,11 +130,13 @@ Alternatives
 - `BeautifulSoup`_ (An HTML Parser and document object toolkit)
 - `ElementTree`_ (A XML Parser and Node Tree toolkit)
 - `lxml`_ (XML and HTML toolkit which mostly mirrors ElementTree)
+- `Dominate`_ (A Python library for creating and manipulating HTML documents using a DOM API)
 - `AdvancedHTMLParser`_ (A Python clone of the JavaScript DOM API)
 
 .. _`ElementTree`: http://effbot.org/elementtree/ 
 .. _`BeautifulSoup`: http://www.crummy.com/software/BeautifulSoup/
 .. _`lxml`: http://lxml.de/
+.. _`Dominate`: https://github.com/Knio/dominate/
 .. _`AdvancedHTMLParser`: https://github.com/kata198/AdvancedHTMLParser
 
 Dependencies
